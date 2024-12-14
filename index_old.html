@@ -1,0 +1,119 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>scan</title>
+    <style>
+        button {
+            display: block;
+            width: 100%;
+            margin: 6px;
+            outline: none;
+            height: 40px;
+            line-height: 40px;
+            color: #fff;
+            background-color: #26a2ff;
+            text-align: center;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+        }
+
+        #qr-input-file {
+            opacity: 0;
+            filter: alpha(opacity=0);
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #upload-text {
+            position: relative;
+            bottom: 40px;
+            user-select: none;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="./js/html5-qrcode.min.js"></script>
+</head>
+<body>
+    <button id="refresh">刷新</button>
+    <button id="scan">使用相机扫一扫方式</button>
+    <button id="useLocal">
+        <input type="file" id="qr-input-file" accept="image/*" value="使用文件方式">
+        <span id="upload-text">使用文件方式</span>
+    </button>
+    <H3 id="readResult"></H3>
+    <div id="reader" width="600px"></div>
+</body>
+<script>
+    function onScanSuccess(decodedText, decodedResult) {
+        $('#readResult').html(decodedText + ":" + decodedResult);
+    }
+    function onScanFailure(error) {
+        $('#readResult').html(error);
+    }
+
+    $(function () {
+        $('#refresh').click(function () {
+            location.reload();
+        });
+
+        $('#scan').click(function () {
+            $('#readResult').html("");
+            const html5QrCode = new Html5Qrcode("reader");
+            const qrCodeSuccessCallback = (decodedText, decodedResult) => {
+                /* handle success */
+                $('#readResult').html("扫描成功：" + decodedText);
+                //关闭摄像头
+                html5QrCode.stop().then((ignore) => {
+                    // QR Code scanning is stopped.
+                }).catch((err) => {
+                    // Stop failed, handle it.
+                });
+            };
+            const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+
+            // If you want to prefer front camera
+            //html5QrCode.start({ facingMode: "user" }, config, qrCodeSuccessCallback);
+
+            // If you want to prefer back camera
+            html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback);
+
+            // Select front camera or fail with `OverconstrainedError`.
+            //html5QrCode.start({ facingMode: { exact: "user"} }, config, qrCodeSuccessCallback);
+
+            // Select back camera or fail with `OverconstrainedError`.
+            //html5QrCode.start({ facingMode: { exact: "environment"} }, config, qrCodeSuccessCallback);
+
+
+        })
+        //选择文件扫描
+        $('#qr-input-file').change(function (e) {
+            $('#readResult').html("");
+            const html5QrCode = new Html5Qrcode("reader");
+            if (e.target.files.length == 0) {
+                // No file selected, ignore
+                return;
+            }
+
+            const imageFile = e.target.files[0];
+            // Scan QR Code
+            html5QrCode.scanFile(imageFile, true)
+                .then(decodedText => {
+                    // success, use decodedText
+                    //console.log(decodedText);
+                    $('#readResult').html(decodedText);
+                    $('#qr-input-file').val('');
+                })
+                .catch(err => {
+                    // failure, handle it.
+                    console.log(`Error scanning file. Reason: ${err}`)
+                    $('#readResult').html("扫描错误：" + err);
+                });
+        });
+
+    })
+</script>
+</html>
