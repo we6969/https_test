@@ -1,127 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>二维码扫描</title>
-		<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
-		<script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
-		<style>
-			.index {
-				width: 100%;
-				height: 100%;
-				overflow: auto;
-				position: relative;
-			}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>二维码扫描</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+    }
 
-			.scan {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				flex-direction: column;
-				position: fixed;
-				top: 0;
-				left: 0;
-				width: 100%;
-				height: 100%;
-				background: #000;
-			}
+    .index {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-			.scan-box {
-				width: 100%;
-			}
+    .scan {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+    }
 
-			.close-scan {
-				position: absolute;
-				top: 20px;
-				right: 20px;
-				color: white;
-				cursor: pointer;
-			}
+    .scan-box {
+      margin-bottom: 20px;
+    }
 
-			.start-scan {
-				position: absolute;
-				top: calc(50% - 25px);
-				left: calc(50% - 100px);
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				border: none;
-				width: 200px;
-				height: 50px;
-				background: #00aaff;
-				color: #fff;
-				border-radius: 10px;
-				cursor: pointer;
-			}
-		</style>
-	</head>
-	<body>
-		<div id="app">
-			<div class="index">
-				<!-- 扫一扫 -->
-				<div class="scan" v-if="isScanning">
-					<div class="scan-box">
-						<div id="scanning"></div>
-					</div>
-					<span class="close-scan" @click="stopScan">关闭</span>
-				</div>
-				<button class="start-scan" v-if="!isScanning" @click="startScan">开始扫一扫</button>
-			</div>
-		</div>
+    .close-scan {
+      color: white;
+      cursor: pointer;
+      margin-top: 20px;
+    }
 
-		<script>
-			new Vue({
-				el: "#app",
-				data: {
-					isScanning: false, // 是否正在扫描
-					html5QrCode: null, // 存储 Html5Qrcode 实例
-				},
-				methods: {
-					startScan() {
-						this.isScanning = true;
-						this.$nextTick(() => {
-							const qrCodeScanner = new Html5Qrcode("scanning");
-							this.html5QrCode = qrCodeScanner;
-							qrCodeScanner
-								.start({
-										facingMode: "environment"
-									}, // 后置摄像头
-									{
-										fps: 10, // 帧率
-										qrbox: {
-											width: 250,
-											height: 250
-										}, // 扫描框大小
-									},
-									(decodedText, decodedResult) => {
-										alert("扫描结果：" + decodedText); // 解码成功后的回调
-										this.stopScan();
-									},
-									(errorMessage) => {
-										console.log("扫描错误：", errorMessage); // 扫描失败的回调
-									}
-								)
-								.catch((err) => {
-									console.error("启动扫描失败：", err);
-									this.isScanning = false;
-								});
-						});
-					},
-					stopScan() {
-						if (this.html5QrCode) {
-							this.html5QrCode
-								.stop()
-								.then(() => {
-									this.isScanning = false;
-								})
-								.catch((err) => {
-									console.error("停止扫描失败：", err);
-								});
-						}
-					},
-				},
-			});
-		</script>
-	</body>
+    .start-scan {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .start-scan:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="index">
+      <div class="scan" v-if="isScanning">
+        <div class="scan-box" id="scanning"></div>
+        <button class="close-scan" @click="stopScan">关闭扫描</button>
+      </div>
+      <button class="start-scan" v-if="!isScanning" @click="startScan">开始扫一扫</button>
+    </div>
+  </div>
+
+  <script>
+    new Vue({
+      el: "#app",
+      data: {
+        isScanning: false, // 是否正在扫描
+        html5QrCode: null, // Html5Qrcode 实例
+      },
+      methods: {
+        startScan() {
+          this.isScanning = true;
+          this.$nextTick(() => {
+            const qrCodeScanner = new Html5Qrcode("scanning");
+            this.html5QrCode = qrCodeScanner;
+            qrCodeScanner
+              .start(
+                { facingMode: "environment" }, // 后置摄像头
+                {
+                  fps: 10,
+                  qrbox: { width: 250, height: 250 }, // 扫描框大小
+                },
+                (decodedText, decodedResult) => {
+                  alert("扫描成功：" + decodedText); // 显示解码结果
+                  this.stopScan();
+                },
+                (errorMessage) => {
+                  console.log("扫描失败：", errorMessage);
+                }
+              )
+              .catch((err) => {
+                console.error("启动扫描失败：", err);
+                this.isScanning = false;
+              });
+          });
+        },
+        stopScan() {
+          if (this.html5QrCode) {
+            this.html5QrCode
+              .stop()
+              .then(() => {
+                this.isScanning = false;
+              })
+              .catch((err) => {
+                console.error("停止扫描失败：", err);
+              });
+          }
+        },
+      },
+    });
+  </script>
+</body>
 </html>
