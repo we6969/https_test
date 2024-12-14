@@ -32,7 +32,26 @@
 			}
 
 			.scan-box {
-				margin-bottom: 20px;
+				width: 100%;
+				/* 水平方向充满 */
+				max-width: 800px;
+				/* 可选：设置最大宽度，防止过度拉伸 */
+				aspect-ratio: 16 / 9;
+				/* 确保扫描区域保持16:9比例 */
+				background: black;
+				/* 设置背景色，便于查看区域效果 */
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				margin: 0 auto;
+				/* 居中对齐 */
+			}
+
+			#scanning {
+				width: 100%;
+				/* 水平方向充满 */
+				height: 100%;
+				/* 自动适配高度 */
 			}
 
 			.close-scan {
