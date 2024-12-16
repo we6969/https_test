@@ -99,9 +99,9 @@
 			<div class="index">
 				<div class="scan" v-if="isScanning">
 					<div class="scan-box" id="scanning"></div>
-					<button class="close-scan" @click="stopScan">关闭扫描</button>
+					<button class="close-scan" @click="stopScan">&nbsp;取消&nbsp;</button>
 				</div>
-				<button class="start-scan" v-if="!isScanning" @click="startScan">开始扫一扫</button>
+				<button class="start-scan" v-if="!isScanning" @click="startScan">开始扫一扫.</button>
 			</div>
 		</div>
 
