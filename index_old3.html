@@ -33,54 +33,25 @@
 
 			.scan-box {
 				width: 100%;
+				/* 水平方向充满 */
 				max-width: 800px;
+				/* 可选：设置最大宽度，防止过度拉伸 */
 				aspect-ratio: 16 / 9;
+				/* 确保扫描区域保持16:9比例 */
 				background: black;
+				/* 设置背景色，便于查看区域效果 */
 				display: flex;
 				justify-content: center;
 				align-items: center;
 				margin: 0 auto;
-				position: relative;
+				/* 居中对齐 */
 			}
 
 			#scanning {
 				width: 100%;
+				/* 水平方向充满 */
 				height: 75%;
-			}
-
-			.corner {
-				position: absolute;
-				width: 50px;
-				height: 50px;
-				border: 5px solid #00ff00;
-			}
-
-			.corner.top-left {
-				top: 0;
-				left: 0;
-				border-right: none;
-				border-bottom: none;
-			}
-
-			.corner.top-right {
-				top: 0;
-				right: 0;
-				border-left: none;
-				border-bottom: none;
-			}
-
-			.corner.bottom-left {
-				bottom: 0;
-				left: 0;
-				border-right: none;
-				border-top: none;
-			}
-
-			.corner.bottom-right {
-				bottom: 0;
-				right: 0;
-				border-left: none;
-				border-top: none;
+				/* 自动适配高度 */
 			}
 
 			.close-scan {
@@ -96,9 +67,11 @@
 				align-items: center;
 				width: 100%;
 				height: 100vh;
+				/* 设置全屏高度 */
 				overflow: auto;
 				position: relative;
 				background: #f0f0f0;
+				/* 可根据需求调整背景色 */
 			}
 
 			.start-scan {
@@ -115,6 +88,7 @@
 				cursor: pointer;
 			}
 
+
 			.start-scan:hover {
 				background-color: #0056b3;
 			}
@@ -124,13 +98,7 @@
 		<div id="app">
 			<div class="index">
 				<div class="scan" v-if="isScanning">
-					<div class="scan-box" id="scanning">
-						<!-- 四个直角框 -->
-						<div class="corner top-left"></div>
-						<div class="corner top-right"></div>
-						<div class="corner bottom-left"></div>
-						<div class="corner bottom-right"></div>
-					</div>
+					<div class="scan-box" id="scanning"></div>
 					<button class="close-scan" @click="stopScan">&nbsp;取消&nbsp;</button>
 				</div>
 				<button class="start-scan" v-if="!isScanning" @click="startScan">开始扫一扫.</button>
@@ -151,15 +119,14 @@
 							const qrCodeScanner = new Html5Qrcode("scanning");
 							this.html5QrCode = qrCodeScanner;
 							qrCodeScanner
-								.start(
-									{
-										facingMode: "environment",
+								.start({
+										facingMode: "environment"
 									}, // 后置摄像头
 									{
 										fps: 10,
 										qrbox: {
 											width: 250,
-											height: 250,
+											height: 250
 										}, // 扫描框大小
 									},
 									(decodedText, decodedResult) => {
